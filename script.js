@@ -1,21 +1,15 @@
 
-// ================= CAMPUS CANTEEN JAVASCRIPT =================
-
 // ================= CART =================
 
 let cart = [];
 
 function addToCart(name, price) {
-    let existingItem = cart.find(item => item.name === name);
+    const existingItem = cart.find(item => item.name === name);
 
     if (existingItem) {
         existingItem.quantity++;
     } else {
-        cart.push({
-            name: name,
-            price: price,
-            quantity: 1
-        });
+        cart.push({ name, price, quantity: 1 });
     }
 
     displayCart();
@@ -86,11 +80,10 @@ function checkout() {
 }
 
 function showCart() {
-    let total = 0;
-
-    cart.forEach(item => {
-        total += item.price * item.quantity;
-    });
+    const total = cart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
 
     alert(
         "Items in Cart: " + cart.length +
@@ -98,19 +91,23 @@ function showCart() {
     );
 }
 
-
-// ================= REGISTER FORM =================
+// ================= REGISTER =================
 
 const registerForm = document.getElementById("registerForm");
 
 if (registerForm) {
-    registerForm.addEventListener("submit", async function(event) {
+    registerForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
         const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value;
-        const message = document.getElementById("message");
+        const email = document.getElementById("registerEmail").value.trim();
+        const password = document.getElementById("registerPassword").value;
+        const confirmPassword = document.getElementById("confirmPassword").value;
+
+        if (password !== confirmPassword) {
+            alert("Password and Confirm Password do not match.");
+            return;
+        }
 
         try {
             const response = await fetch("/api/register", {
@@ -124,52 +121,39 @@ if (registerForm) {
             const result = await response.json();
 
             if (!response.ok) {
-                if (message) {
-                    message.textContent = result.message || "Registration failed";
-                } else {
-                    alert(result.message || "Registration failed");
-                }
+                alert(result.message || "Registration failed.");
                 return;
             }
 
-            if (message) {
-                message.textContent = "Registration successful! Please login.";
-            } else {
-                alert("Registration successful! Please login.");
-            }
-
+            alert(result.message || "Registration successful!");
             registerForm.reset();
+            window.location.href = "login.html";
 
         } catch (error) {
+            console.error("Register error:", error);
             alert("Unable to connect to server. Please try again.");
         }
     });
 }
 
-
-// ================= LOGIN FORM =================
+// ================= LOGIN =================
 
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
-    loginForm.addEventListener("submit", async function(event) {
+    loginForm.addEventListener("submit", async function (event) {
         event.preventDefault();
 
         const emailInput =
-            document.getElementById("email") ||
-            document.getElementById("loginEmail");
+            document.getElementById("loginEmail") ||
+            document.getElementById("email");
 
         const passwordInput =
-            document.getElementById("password") ||
-            document.getElementById("loginPassword");
+            document.getElementById("loginPassword") ||
+            document.getElementById("password");
 
         const email = emailInput ? emailInput.value.trim() : "";
         const password = passwordInput ? passwordInput.value : "";
-
-        if (!email || !password) {
-            alert("Please enter Email and Password");
-            return;
-        }
 
         try {
             const response = await fetch("/api/login", {
@@ -183,23 +167,22 @@ if (loginForm) {
             const result = await response.json();
 
             if (!response.ok) {
-                alert(result.message || "Login failed");
+                alert(result.message || "Login failed.");
                 return;
             }
 
-            if (result.token) {
-                localStorage.setItem("token", result.token);
-            }
-
-            if (result.user) {
-                localStorage.setItem("user", JSON.stringify(result.user));
-            }
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("user", JSON.stringify(result.user));
 
             alert("Login successful!");
             window.location.href = "index.html";
 
         } catch (error) {
+            console.error("Login error:", error);
             alert("Unable to connect to server. Please try again.");
         }
     });
 }
+
+// SHOW CART WHEN CART PAGE LOADS
+displayCart();
