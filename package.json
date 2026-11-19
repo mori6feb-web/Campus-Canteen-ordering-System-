@@ -1,16 +1,18 @@
+
 {
-  "name": "campus---canteen",
+  "name": "campus-canteen",
   "version": "1.0.0",
-  "description": "",
-  "main": "script.js",
+  "description": "Campus Canteen Ordering System",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js",
+    "check-db": "node check-db.js"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "type": "commonjs",
   "dependencies": {
-    "express": "^5.2.1"
+    "express": "^5.2.1",
+    "better-sqlite3": "^12.0.0"
   }
 }
