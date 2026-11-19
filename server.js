@@ -1,4 +1,3 @@
-
 const express = require("express");
 const cors = require("cors");
 const Database = require("better-sqlite3");
@@ -9,14 +8,18 @@ const fs = require("fs");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const JWT_SECRET = process.env.JWT_SECRET || "campus_canteen_secret_change_this";
+const JWT_SECRET =
+    process.env.JWT_SECRET || "campus_canteen_secret_change_this";
 
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// DATABASE
-const dbPath = process.env.DB_PATH || path.join(__dirname, "campus_canteen.db");
+// ================= DATABASE =================
+
+const dbPath =
+    process.env.DB_PATH || path.join(__dirname, "campus_canteen.db");
+
 const db = new Database(dbPath);
 
 db.pragma("foreign_keys = ON");
@@ -60,28 +63,42 @@ CREATE TABLE IF NOT EXISTS order_items (
 );
 `);
 
-// ADD SAMPLE FOOD ITEMS ONLY IF TABLE IS EMPTY
-const foodCount = db.prepare("SELECT COUNT(*) AS count FROM food_items").get();
+// ================= SAMPLE FOOD =================
+
+const foodCount = db.prepare(
+    "SELECT COUNT(*) AS count FROM food_items"
+).get();
 
 if (foodCount.count === 0) {
     const insertFood = db.prepare(`
-        INSERT INTO food_items (name, description, price, category, available)
+        INSERT INTO food_items
+        (name, description, price, category, available)
         VALUES (?, ?, ?, ?, 1)
     `);
 
-    insertFood.run("Veg Sandwich", "Fresh vegetable sandwich", 80, "Snacks");
-    insertFood.run("Masala Maggi", "Spicy masala maggi", 50, "Snacks");
-    insertFood.run("Hakka Noodles", "Delicious hakka noodles", 120, "Chinese");
-    insertFood.run("White Sauce Pasta", "Creamy white sauce pasta", 150, "Italian");
-    insertFood.run("Pizza", "Cheese pizza", 180, "Italian");
+    insertFood.run("Pizza", "Cheese pizza", 80, "Meals");
+    insertFood.run("Burger", "Vegetable burger", 60, "Snacks");
+    insertFood.run("Sandwich", "Vegetable sandwich", 50, "Breakfast");
+    insertFood.run("French Fries", "Crispy fries", 40, "Snacks");
+    insertFood.run("Thali", "Vegetarian meal", 100, "Meals");
+    insertFood.run("Cold Drink", "Refreshing drink", 30, "Drinks");
+    insertFood.run("Hakka Noodles", "Vegetable noodles", 70, "Meals");
+    insertFood.run("Pasta", "White sauce pasta", 80, "Meals");
+    insertFood.run("Maggi", "Masala Maggi", 40, "Snacks");
 }
 
-// AUTHENTICATION
+// ================= AUTHENTICATION =================
+
 function createToken(user) {
     return jwt.sign(
-        { id: user.id, email: user.email },
+        {
+            id: user.id,
+            email: user.email
+        },
         JWT_SECRET,
-        { expiresIn: "7d" }
+        {
+            expiresIn: "7d"
+        }
     );
 }
 
@@ -89,7 +106,10 @@ function authMiddleware(req, res, next) {
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        return res.status(401).json({ message: "Please login first." });
+        return res.status(401).json({
+            success: false,
+            message: "Please login first."
+        });
     }
 
     try {
@@ -97,11 +117,15 @@ function authMiddleware(req, res, next) {
         req.user = jwt.verify(token, JWT_SECRET);
         next();
     } catch (error) {
-        return res.status(401).json({ message: "Invalid or expired token." });
+        return res.status(401).json({
+            success: false,
+            message: "Invalid or expired token."
+        });
     }
 }
 
-// REGISTER API
+// ================= REGISTER =================
+
 function registerUser(req, res) {
     try {
         const { name, email, password } = req.body;
@@ -120,6 +144,7 @@ function registerUser(req, res) {
             });
         }
 
+        const cleanName = name.trim();
         const cleanEmail = email.trim().toLowerCase();
 
         const existingUser = db.prepare(
@@ -129,7 +154,7 @@ function registerUser(req, res) {
         if (existingUser) {
             return res.status(409).json({
                 success: false,
-                message: "This email is already registered. Please login."
+                message: "Email already registered. Please login."
             });
         }
 
@@ -138,21 +163,22 @@ function registerUser(req, res) {
         const result = db.prepare(`
             INSERT INTO users (name, email, password)
             VALUES (?, ?, ?)
-        `).run(name.trim(), cleanEmail, hashedPassword);
+        `).run(cleanName, cleanEmail, hashedPassword);
 
-        return res.status(201).json({
+        res.status(201).json({
             success: true,
             message: "Registration successful! Please login.",
             user: {
                 id: result.lastInsertRowid,
-                name: name.trim(),
+                name: cleanName,
                 email: cleanEmail
             }
         });
 
     } catch (error) {
         console.error("Registration error:", error);
-        return res.status(500).json({
+
+        res.status(500).json({
             success: false,
             message: "Registration failed. Please try again."
         });
@@ -162,7 +188,8 @@ function registerUser(req, res) {
 app.post("/api/register", registerUser);
 app.post("/api/auth/signup", registerUser);
 
-// LOGIN API
+// ================= LOGIN =================
+
 function loginUser(req, res) {
     try {
         const { email, password } = req.body;
@@ -189,7 +216,7 @@ function loginUser(req, res) {
 
         const token = createToken(user);
 
-        return res.json({
+        res.json({
             success: true,
             message: "Login successful!",
             token,
@@ -202,7 +229,8 @@ function loginUser(req, res) {
 
     } catch (error) {
         console.error("Login error:", error);
-        return res.status(500).json({
+
+        res.status(500).json({
             success: false,
             message: "Login failed. Please try again."
         });
@@ -212,58 +240,138 @@ function loginUser(req, res) {
 app.post("/api/login", loginUser);
 app.post("/api/auth/login", loginUser);
 
-// CURRENT USER
+// ================= CURRENT USER =================
+
 app.get("/api/auth/me", authMiddleware, (req, res) => {
-    const user = db.prepare(
-        "SELECT id, name, email FROM users WHERE id = ?"
-    ).get(req.user.id);
+    try {
+        const user = db.prepare(`
+            SELECT id, name, email
+            FROM users
+            WHERE id = ?
+        `).get(req.user.id);
 
-    if (!user) {
-        return res.status(404).json({ message: "User not found." });
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found."
+            });
+        }
+
+        res.json({ user });
+
+    } catch (error) {
+        console.error("Current user error:", error);
+        res.status(500).json({
+            message: "Unable to get user details."
+        });
     }
-
-    res.json({ user });
 });
 
-// FOOD ITEMS
+// ================= FOOD ITEMS =================
+
 app.get("/api/food-items", (req, res) => {
-    const foods = db.prepare(
-        "SELECT * FROM food_items WHERE available = 1"
-    ).all();
+    try {
+        const foods = db.prepare(`
+            SELECT *
+            FROM food_items
+            WHERE available = 1
+            ORDER BY id
+        `).all();
 
-    res.json(foods);
+        res.json(foods);
+
+    } catch (error) {
+        console.error("Food error:", error);
+        res.status(500).json({
+            message: "Unable to load food items."
+        });
+    }
 });
 
-// CREATE ORDER
+// ================= CREATE ORDER =================
+
 app.post("/api/orders", authMiddleware, (req, res) => {
     try {
-        const { items, total_amount } = req.body;
+        const { items } = req.body;
 
         if (!Array.isArray(items) || items.length === 0) {
-            return res.status(400).json({ message: "Cart is empty." });
+            return res.status(400).json({
+                success: false,
+                message: "Your cart is empty."
+            });
+        }
+
+        let total = 0;
+
+        for (const item of items) {
+            const quantity = Number(item.quantity);
+            const price = Number(item.price);
+
+            if (
+                !item.name ||
+                !Number.isInteger(quantity) ||
+                quantity < 1 ||
+                !Number.isFinite(price) ||
+                price <= 0
+            ) {
+                return res.status(400).json({
+                    success: false,
+                    message: "Invalid food item in cart."
+                });
+            }
+
+            total += price * quantity;
         }
 
         const createOrder = db.transaction(() => {
-            const order = db.prepare(`
+
+            const orderResult = db.prepare(`
                 INSERT INTO orders (user_id, total_amount)
                 VALUES (?, ?)
-            `).run(req.user.id, Number(total_amount));
+            `).run(req.user.id, total);
 
-            const insertItem = db.prepare(`
-                INSERT INTO order_items (order_id, food_item_id, quantity, price)
+            const findFood = db.prepare(`
+                SELECT id
+                FROM food_items
+                WHERE name = ?
+            `);
+
+            const insertFood = db.prepare(`
+                INSERT INTO food_items
+                (name, description, price, category, available)
+                VALUES (?, ?, ?, ?, 1)
+            `);
+
+            const insertOrderItem = db.prepare(`
+                INSERT INTO order_items
+                (order_id, food_item_id, quantity, price)
                 VALUES (?, ?, ?, ?)
             `);
 
             for (const item of items) {
-                insertItem.run(
-                    order.lastInsertRowid,
-                    item.food_item_id,
-                    item.quantity,
-                    item.price
+                let food = findFood.get(item.name);
+
+                if (!food) {
+                    const newFood = insertFood.run(
+                        item.name,
+                        item.name,
+                        Number(item.price),
+                        "Other"
+                    );
+
+                    food = {
+                        id: newFood.lastInsertRowid
+                    };
+                }
+
+                insertOrderItem.run(
+                    orderResult.lastInsertRowid,
+                    food.id,
+                    Number(item.quantity),
+                    Number(item.price)
                 );
             }
 
-            return order.lastInsertRowid;
+            return orderResult.lastInsertRowid;
         });
 
         const orderId = createOrder();
@@ -271,43 +379,89 @@ app.post("/api/orders", authMiddleware, (req, res) => {
         res.status(201).json({
             success: true,
             message: "Order placed successfully!",
-            orderId
+            orderId,
+            total
         });
 
     } catch (error) {
         console.error("Order error:", error);
-        res.status(500).json({ message: "Unable to place order." });
+
+        res.status(500).json({
+            success: false,
+            message: "Unable to place order."
+        });
     }
 });
 
-// MY ORDERS
+// ================= MY ORDERS =================
+
 app.get("/api/my-orders", authMiddleware, (req, res) => {
-    const orders = db.prepare(`
-        SELECT * FROM orders
-        WHERE user_id = ?
-        ORDER BY id DESC
-    `).all(req.user.id);
+    try {
+        const orders = db.prepare(`
+            SELECT *
+            FROM orders
+            WHERE user_id = ?
+            ORDER BY id DESC
+        `).all(req.user.id);
 
-    res.json(orders);
+        const getOrderItems = db.prepare(`
+            SELECT
+                food_items.name AS name,
+                order_items.quantity AS quantity,
+                order_items.price AS price
+            FROM order_items
+            LEFT JOIN food_items
+            ON order_items.food_item_id = food_items.id
+            WHERE order_items.order_id = ?
+        `);
+
+        const result = orders.map(order => ({
+            ...order,
+            items: getOrderItems.all(order.id)
+        }));
+
+        res.json(result);
+
+    } catch (error) {
+        console.error("My Orders error:", error);
+
+        res.status(500).json({
+            message: "Unable to load your orders."
+        });
+    }
 });
 
-// DATABASE TABLE CHECK
+// ================= DATABASE TABLES =================
+
 app.get("/api/database-tables", (req, res) => {
-    const tables = db.prepare(`
-        SELECT name FROM sqlite_master
-        WHERE type = 'table'
-        ORDER BY name
-    `).all();
+    try {
+        const tables = db.prepare(`
+            SELECT name
+            FROM sqlite_master
+            WHERE type = 'table'
+            ORDER BY name
+        `).all();
 
-    res.json(tables);
+        res.json(tables);
+
+    } catch (error) {
+        res.status(500).json({
+            message: "Unable to get database tables."
+        });
+    }
 });
 
-// HEALTH CHECK
+// ================= HEALTH CHECK =================
+
 app.get("/health", (req, res) => {
-    res.json({ status: "ok", message: "Campus Canteen server is running." });
+    res.json({
+        status: "ok",
+        message: "Campus Canteen server is running."
+    });
 });
 
-// SERVE FRONTEND FILES FROM THIS PROJECT FOLDER
+// ================= FRONTEND =================
+
 app.use(express.static(__dirname));
 
 app.get("/", (req, res) => {
@@ -319,6 +473,8 @@ app.get("/", (req, res) => {
 
     res.send("Campus Canteen Server is Running");
 });
+
+// ================= START SERVER =================
 
 app.listen(PORT, "0.0.0.0", () => {
     console.log("Campus Canteen Server Started");
