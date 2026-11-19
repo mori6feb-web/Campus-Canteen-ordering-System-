@@ -52,4 +52,3 @@ app.post("/register", (req, res) => {
         <a href="/login.html">Go to Login</a>
     `);
 });
-
