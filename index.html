@@ -1,26 +1,18 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>Campus Canteen</title>
-
-    <!-- CSS File -->
     <link rel="stylesheet" href="style.css">
-    <script src="script.js"></script>
-
 </head>
 
 <body>
 
-    <!-- ================= NAVBAR ================= -->
+    <!-- NAVBAR -->
     <header class="navbar">
-
-        <div class="logo">
-            🍴 Campus Canteen
-        </div>
-
+        <div class="logo">🍴 Campus Canteen</div>
         <nav>
             <a href="#">Home</a>
             <a href="#menu">Menu</a>
@@ -29,350 +21,104 @@
             <a href="login.html">Login</a>
             <a href="#cart">Cart 🛒</a>
         </nav>
-
     </header>
 
-
-    <!-- ================= HERO SECTION ================= -->
+    <!-- HERO -->
     <section class="hero">
-
         <div class="hero-content">
-
             <h1>Welcome to Campus Canteen</h1>
-
-            <p>
-                Fresh Food • Easy Ordering • Quick Pickup
-            </p>
-
-            <button class="order-btn">
+            <p>Fresh Food • Easy Ordering • Quick Pickup</p>
+            <button class="order-btn" onclick="location.href='#menu'">
                 Order Now
             </button>
-
         </div>
-
     </section>
 
-
-    <!-- ================= CATEGORIES ================= -->
+    <!-- CATEGORIES -->
     <section class="categories">
-
         <h2>Food Categories</h2>
-
         <div class="category-buttons">
-
             <button>All</button>
             <button>Breakfast</button>
             <button>Snacks</button>
             <button>Meals</button>
             <button>Drinks</button>
-
         </div>
-
     </section>
 
-
-    <!-- ================= MENU ================= -->
+    <!-- MENU -->
     <section class="menu" id="menu">
-
         <h2>Popular Food</h2>
 
         <div class="food-container">
 
-
-            <!-- FOOD CARD 1 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🍕
-                </div>
-
+                <div class="food-image">🍕</div>
                 <h3>Pizza</h3>
-
-                <p class="description">
-                    Cheese pizza with fresh toppings.
-                </p>
-
-                <p class="price">
-                    ₹80
-                </p>
-
-                <button class="cart-btn" onclick="addToCart('Pizza' , 80)">
-                         Add to Cart
-               </button> 
+                <p class="description">Cheese pizza with fresh toppings.</p>
+                <p class="price">₹80</p>
+                <button class="cart-btn" onclick="addToCart('Pizza', 80)">Add to Cart</button>
             </div>
 
-
-            <!-- FOOD CARD 2 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🍔
-                </div>
-
+                <div class="food-image">🍔</div>
                 <h3>Burger</h3>
-
-                <p class="description">
-                    Fresh and tasty vegetable burger.
-                </p>
-
-                <p class="price">
-                    ₹60
-                </p>
-
-             <button class="cart-btn" onclick="addToCart('Burger' , 60)">
-                     Add to Cart
-            </button> 
+                <p class="description">Fresh and tasty vegetable burger.</p>
+                <p class="price">₹60</p>
+                <button class="cart-btn" onclick="addToCart('Burger', 60)">Add to Cart</button>
             </div>
 
-
-            <!-- FOOD CARD 3 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🥪
-                </div>
-
+                <div class="food-image">🥪</div>
                 <h3>Sandwich</h3>
-
-                <p class="description">
-                    Healthy sandwich with vegetables.
-                </p>
-
-                <p class="price">
-                    ₹50
-                </p>
-
-                <button class="cart-btn" onclick="addToCart('Sandwich' , 50)">
-                      Add to Cart
-                </button> 
-
+                <p class="description">Healthy sandwich with vegetables.</p>
+                <p class="price">₹50</p>
+                <button class="cart-btn" onclick="addToCart('Sandwich', 50)">Add to Cart</button>
             </div>
 
-
-            <!-- FOOD CARD 4 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🍟
-                </div>
-
+                <div class="food-image">🍟</div>
                 <h3>French Fries</h3>
-
-                <p class="description">
-                    Crispy and delicious French fries.
-                </p>
-
-                <p class="price">
-                    ₹40
-                </p>
-
-                <button class="cart-btn" onclick="addToCart('French Fries' , 40)">
-                       Add to Cart
-                </button> 
+                <p class="description">Crispy and delicious French fries.</p>
+                <p class="price">₹40</p>
+                <button class="cart-btn" onclick="addToCart('French Fries', 40)">Add to Cart</button>
             </div>
 
-
-            <!-- FOOD CARD 5 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🍛
-                </div>
-
+                <div class="food-image">🍛</div>
                 <h3>Veg Thali</h3>
-
-                <p class="description">
-                    Complete vegetarian lunch meal.
-                </p>
-
-                <p class="price">
-                    ₹100
-                </p>
-
-                <button class="cart-btn" onclick="addToCart('Thali' , 100)">
-                        Add to Cart
-                </button> 
+                <p class="description">Complete vegetarian lunch meal.</p>
+                <p class="price">₹100</p>
+                <button class="cart-btn" onclick="addToCart('Thali', 100)">Add to Cart</button>
             </div>
 
-
-            <!-- FOOD CARD 6 -->
             <div class="food-card">
-
-                <div class="food-image">
-                    🥤
-                </div>
-
+                <div class="food-image">🥤</div>
                 <h3>Cold Drink</h3>
-
-                <p class="description">
-                    Chilled refreshing soft drink.
-                </p>
-
-                <p class="price">
-                    ₹30
-                </p>
-
-                <button class="cart-btn" onclick="addToCart('Cold Drink' , 30)">
-                       Add to Cart
-                </button> 
-
+                <p class="description">Chilled refreshing soft drink.</p>
+                <p class="price">₹30</p>
+                <button class="cart-btn" onclick="addToCart('Cold Drink', 30)">Add to Cart</button>
             </div>
 
-            <!-- FOOD CARD 7 -->
             <div class="food-card">
-    <div class="food-image">🍜</div>
-
-    <h3>Hakka Noodles</h3>
-
-    <p class="description">
-        Spicy and tasty vegetable Hakka noodles.
-    </p>
-
-    <p class="price">₹70</p>
-
-    <button class="cart-btn" onclick="addToCart('Hakka Noodles' , 70)">
-            Add to Cart
-    </button>
- </div>
-
-  
- <!-- FOOD CARD 8 -->
- <div class="food-card">
-    <div class="food-image">🍝</div>
-
-    <h3>Pasta</h3>
-
-    <p class="description">
-        Creamy and delicious white sauce pasta.
-    </p>
-
-    <p class="price">₹80</p>
-
-    <button class="cart-btn" onclick="addToCart('Pasta' , 80)">
-             Add to Cart
-    </button>    
-</div>
-
-
-<!-- FOOD CARD 9 -->
-<div class="food-card">
-    <div class="food-image">🍜</div>
-
-    <h3>Masala Maggi</h3>
-
-    <p class="description">
-        Hot and spicy masala Maggi.
-    </p>
-
-    <p class="price">₹40</p>
-
-    <button class="cart-btn" onclick="addToCart('Maggi' , 40)">
-               Add to Cart
-    </button> 
-</div>
-
-        </div>
-
-    </section>
-
-
-    <!-- ================= ABOUT ================= -->
-    <section class="about" id="about">
-
-        <h2>About Campus Canteen</h2>
-
-        <p>
-            Campus Canteen is an online food ordering system
-            designed for college students. Students can browse
-            food items, add them to cart and place orders easily.
-        </p>
-
-    </section>
-
-
-    <!-- ================= CONTACT ================= -->
-    <section class="contact" id="contact">
-
-            <h2>Contact Us</h2>
-
-        <p>📍 College Campus Canteen</p>
-        <p>📞 +91 9876543210</p>
-        <p>✉️ campuscanteen@gmail.com</p>
-
-    </section>
- 
-   <!-- CONTACT SECTION -->
-
-<section class="contact" id="contact">
-
-    <div class="contact-title">
-        <p class="small-title">VISIT US</p>
-
-        <h2>Find Our Campus Canteen</h2>
-
-        <p>Adani University, Shantigram, Ahmedabad</p>
-    </div>
-
-    <div class="map-box">
-
-        <div class="map-heading">
-            <span>📍</span>
-            <div>
-                <h3>Adani University</h3>
-                <p>Shantigram, Ahmedabad, Gujarat</p>
+                <div class="food-image">🍜</div>
+                <h3>Hakka Noodles</h3>
+                <p class="description">Spicy and tasty vegetable Hakka noodles.</p>
+                <p class="price">₹70</p>
+                <button class="cart-btn" onclick="addToCart('Hakka Noodles', 70)">Add to Cart</button>
             </div>
-        </div>
 
-        <div class="map-container">
-            <iframe
-                src="https://www.google.com/maps?q=Adani+University,+Shantigram,+Ahmedabad&output=embed"
-                loading="lazy"
-                allowfullscreen>
-            </iframe>
-        </div>
+            <div class="food-card">
+                <div class="food-image">🍝</div>
+                <h3>Pasta</h3>
+                <p class="description">Creamy and delicious white sauce pasta.</p>
+                <p class="price">₹80</p>
+                <button class="cart-btn" onclick="addToCart('Pasta', 80)">Add to Cart</button>
+            </div>
 
-        <div class="map-footer">
-            <span>📍 Shantigram, Ahmedabad</span>
-
-            <a href="https://www.google.com/maps/search/?api=1&query=Adani+University+Shantigram+Ahmedabad"
-               target="_blank">
-                Open in Google Maps →
-            </a>
-        </div>
-
-    </div>
-
-</section>
-
-    <!-- ================= FOOTER ================= -->
-    <footer>
-
-        <p>
-            © 2026 Campus Canteen | All Rights Reserved
-        </p>
-
-    </footer>
-
-
-</body>
-</html>
-
-<script src="script.js"></script>
-</body>
-</html>
-
-<!-- CART SECTION -->
-<section class="cart-section" id="cart">
-    <h2>Your Cart 🛒</h2>
-
-    <div id="cartItems">
-        <p>Your cart is empty.</p>
-    </div>
-
-    <div class="cart-total">
-        <h3>Total: ₹<span id="cartTotal">0</span></h3>
-        <button class="checkout-btn" onclick="checkout()">
-            Place Order
-        </button>
-    </div>
-</section>
+            <div class="food-card">
+                <div class="food-image">🍜</div>
+                <h3>Masala Maggi</h3>
+                <p class="description">Hot and spicy masala Maggi.</p>
+                <p class="price">₹40</p>
+                <button class="cart-btn" onclick="addToCart('Maggi', 40)">
